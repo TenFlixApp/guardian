@@ -4,6 +4,6 @@ services:
     image: docker.io/library/mariadb
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - 3306:3306

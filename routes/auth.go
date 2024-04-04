@@ -76,7 +76,7 @@ func LoginRoute(c *gin.Context) {
 	var input struct {
 		Username string `json:"username"`
 		Password string `json:"password"`
-		Rights   int    `json:"rigths"`
+		Rights   int    `json:"rights"`
 	}
 
 	// Si on n'arrive pas à caster le body, il est mal formé, on renvoie une erreur

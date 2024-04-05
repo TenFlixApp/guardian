@@ -11,14 +11,31 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getTokens(username string, rights int) (token string, refreshToken string, err error) {
+// Type du body attendu
+var input struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Rights   int    `json:"rights"`
+}
+
+/**
+* Création des tokens
+*
+* @param {string} username - Nom d'utilisateur
+* @param {int} rights - Niveau des droits
+*
+* @returns {string} token - Token d'accès
+* @returns {string} refreshToken - Token de refresh
+* @returns {error} err - Erreur lors de la fonction
+ */
+func getTokens(username string, rights int) (token *string, refreshToken *string, err error) {
 	// Création des tokens
 	token, errToken := security.CreateToken(username, rights, false)
 	refreshToken, errRefreshToken := security.CreateToken(username, security.NONE, true)
 
 	// Gestion d'erreur
 	if errToken != nil || errRefreshToken != nil {
-		return "", "", errors.New("failed to create tokens")
+		return nil, nil, errors.New("failed to create tokens")
 	}
 
 	return token, refreshToken, nil
@@ -30,12 +47,6 @@ func getTokens(username string, rights int) (token string, refreshToken string, 
 * @param {*gin.Context} c - Context de la requête
  */
 func RegisterRoute(c *gin.Context) {
-	// Type du body attendu
-	var input struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
-
 	// Si on n'arrive pas à caster le body, il est mal formé, on renvoie une erreur
 	if err := c.BindJSON(&input); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
@@ -45,8 +56,8 @@ func RegisterRoute(c *gin.Context) {
 	hashedPassword := security.HashPassword(input.Password)
 
 	// Enregistrement de l'utilisateur
-	success, dataError := data.RegisterQuery(input.Username, hashedPassword, security.USER)
-	if !success {
+	dataError := data.RegisterQuery(input.Username, hashedPassword, security.USER)
+	if dataError != nil {
 		if dataError.Code == exceptions.SQL_ERROR_DUPLICATE {
 			c.IndentedJSON(http.StatusConflict, gin.H{"error": dataError.Message})
 		} else {
@@ -72,13 +83,6 @@ func RegisterRoute(c *gin.Context) {
 * @param {*gin.Context} c - Context de la requête
  */
 func LoginRoute(c *gin.Context) {
-	// Type du body attendu
-	var input struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-		Rights   int    `json:"rights"`
-	}
-
 	// Si on n'arrive pas à caster le body, il est mal formé, on renvoie une erreur
 	if err := c.BindJSON(&input); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})

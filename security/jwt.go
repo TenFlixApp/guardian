@@ -14,7 +14,7 @@ import (
 * @param {string} username - Nom de l'utilisateur
 * @param {bool} refresh - True si on gènère le token de refresh, false si access
  */
-func CreateToken(username string, rights int, refresh bool) (string, error) {
+func CreateToken(username string, rights int, refresh bool) (*string, error) {
 	// Variable de multiplication des heures initialisée à 1
 	multiplicateur := 1
 	// Si en refresh, on fait * 24 heures et * 30 jours
@@ -42,8 +42,8 @@ func CreateToken(username string, rights int, refresh bool) (string, error) {
 	// Si un erreur, on renvoie une string vide et l'objet erreur
 	if err != nil {
 		fmt.Println(err)
-		return "", err
+		return nil, err
 	}
 	// Sinon, on renvoie le token et null
-	return tokenString, nil
+	return &tokenString, nil
 }

@@ -1,9 +1,9 @@
 package data
 
 import (
-	"database/sql" // Package sql
-	"log"          // Logs
-	"os"           // OS
+	"database/sql"
+	"log"
+	"os"
 )
 
 // Variable driver BDD

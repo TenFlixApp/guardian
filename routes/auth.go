@@ -12,7 +12,7 @@ import (
 )
 
 // Type du body attendu
-var input struct {
+type Input struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Rights   int    `json:"rights"`
@@ -47,9 +47,11 @@ func getTokens(username string, rights int) (token *string, refreshToken *string
 * @param {*gin.Context} c - Context de la requête
  */
 func RegisterRoute(c *gin.Context) {
+	var input Input
+
 	// Si on n'arrive pas à caster le body, il est mal formé, on renvoie une erreur
 	if err := c.BindJSON(&input); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -83,6 +85,7 @@ func RegisterRoute(c *gin.Context) {
 * @param {*gin.Context} c - Context de la requête
  */
 func LoginRoute(c *gin.Context) {
+	var input Input
 	// Si on n'arrive pas à caster le body, il est mal formé, on renvoie une erreur
 	if err := c.BindJSON(&input); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})

@@ -48,5 +48,5 @@ func main() {
 	router.POST("/login", routes.LoginRoute)
 
 	// Lancement du serveur
-	router.Run("localhost:8080")
+	router.Run(":8080")
 }

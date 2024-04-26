@@ -1,8 +1,13 @@
 package routes
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
+	"os"
+	"time"
 
 	"guardian/data"
 	"guardian/exceptions"
@@ -74,6 +79,21 @@ func RegisterRoute(c *gin.Context) {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "Failed to create tokens"})
 			return
 		}
+
+		// Push des metrics
+		metrics := map[string]interface{}{
+			"username":      input.Username,
+			"register_date": time.Now().Format(time.RFC3339),
+		}
+		jsonMetrics, err := json.Marshal(metrics)
+		if err == nil {
+			_, err = http.Post(os.Getenv("COLLECTOR_ROUTE")+"metrics/register", "application/json", bytes.NewBuffer(jsonMetrics))
+			if err != nil {
+				log.Println("Failed to push register metrics", err)
+				return
+			}
+		}
+
 		c.IndentedJSON(http.StatusCreated, gin.H{"token": token, "refreshToken": refreshToken})
 		return
 	}
@@ -114,6 +134,20 @@ func LoginRoute(c *gin.Context) {
 	// Gestion d'erreur
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Failed to create tokens"})
+	}
+
+	// Push des metrics
+	metrics := map[string]interface{}{
+		"username":   input.Username,
+		"login_date": time.Now().Format(time.RFC3339),
+	}
+	jsonMetrics, err := json.Marshal(metrics)
+	if err == nil {
+		_, err = http.Post(os.Getenv("COLLECTOR_ROUTE")+"metrics/login", "application/json", bytes.NewBuffer(jsonMetrics))
+		if err != nil {
+			log.Println("Failed to push login metrics", err)
+			return
+		}
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{"token": token, "refreshToken": refreshToken})

@@ -34,3 +34,27 @@ func GetUser(username string, password string) (user *User, err error) {
 		return utilisateur, nil
 	}
 }
+
+func CountAdminUsers() (int, error) {
+	var count int
+
+	// Exécuter la requête SQL pour récupérer le nombre d'admins
+	err := db.QueryRow("SELECT COUNT(*) FROM auth WHERE rights = 15").Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func CountDisabledUsers() (int, error) {
+	var count int
+
+	// Exécuter la requête SQL pour récupérer le nombre d'admins
+	err := db.QueryRow("SELECT COUNT(*) FROM auth WHERE rights = 0").Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}

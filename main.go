@@ -47,6 +47,8 @@ func main() {
 	// Connexion de l'utilisateur
 	router.POST("/login", routes.LoginRoute)
 
+	router.GET("/metrics", routes.GetDashboardStatsRoute)
+
 	// Lancement du serveur
 	router.Run(":8080")
 }

@@ -1,11 +1,5 @@
 package data
 
-import (
-	"errors"
-	"fmt"
-)
-
-// Type utilisateur
 type User struct {
 	Username string
 	Password string
@@ -20,16 +14,12 @@ type User struct {
 *
 * @return {bool} success - Succès de la fonction
  */
-func GetUser(username string, password string) (user *User, err error) {
-	// Création d'un user vide
+func GetUser(username string, password string) (*User, error) {
 	utilisateur := &User{}
 
-	// Récupération du user BDD
-	erreur := db.QueryRow(`SELECT username, password, rights FROM auth WHERE username = ?`, username).Scan(&utilisateur.Username, &utilisateur.Password, &utilisateur.Rights)
-	// Gestion d'erreur
-	if erreur != nil {
-		fmt.Printf("Erreur de récupération du user: %v\n", err)
-		return &User{}, errors.New("utilisateur non récupéré")
+	err := db.QueryRow(`SELECT username, password, rights FROM auth WHERE username = ?`, username).Scan(&utilisateur.Username, &utilisateur.Password, &utilisateur.Rights)
+	if err != nil {
+		return nil, err
 	} else {
 		return utilisateur, nil
 	}
@@ -38,7 +28,6 @@ func GetUser(username string, password string) (user *User, err error) {
 func CountAdminUsers() (int, error) {
 	var count int
 
-	// Exécuter la requête SQL pour récupérer le nombre d'admins
 	err := db.QueryRow("SELECT COUNT(*) FROM auth WHERE rights = 15").Scan(&count)
 	if err != nil {
 		return 0, err
@@ -50,7 +39,6 @@ func CountAdminUsers() (int, error) {
 func CountDisabledUsers() (int, error) {
 	var count int
 
-	// Exécuter la requête SQL pour récupérer le nombre d'admins
 	err := db.QueryRow("SELECT COUNT(*) FROM auth WHERE rights = 0").Scan(&count)
 	if err != nil {
 		return 0, err

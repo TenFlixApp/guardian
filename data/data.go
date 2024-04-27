@@ -6,7 +6,6 @@ import (
 	"os"
 )
 
-// Variable driver BDD
 var db *sql.DB
 
 /**

@@ -1,6 +1,5 @@
 package exceptions
 
-// Erreurs SQL Gérées
 const (
 	SQL_ERROR_TRANS_COMMIT   = 5 // Erreur lors du rollback de la transaction
 	SQL_ERROR_TRANS_ROLLBACK = 4 // Erreur lors du rollback de la transaction
@@ -10,7 +9,6 @@ const (
 	ERROR_LAMBDA             = 0 // Erreur par défaut
 )
 
-// Type d'erreur remontable par le package
 type DataPackageError struct {
 	Message string
 	Code    int

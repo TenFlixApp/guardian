@@ -35,6 +35,10 @@ func main() {
 
 	router.POST("/register", routes.RegisterRoute)
 	router.POST("/login", routes.LoginRoute)
+
+	router.GET("/users", routes.GetUsersRoute)
+	router.PUT("/users/rights", routes.UpdateRightsRoute)
+
 	router.GET("/metrics", routes.GetDashboardStatsRoute)
 
 	router.Run(":8080")
